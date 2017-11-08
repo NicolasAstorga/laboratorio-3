@@ -1,0 +1,115 @@
+#include <stdlib.h>
+#include <stdbool.h>
+#include <stdio.h>
+
+typedef struct info{
+int dato;
+}Info;
+
+typedef struct nodo {
+	Info *datos;
+	struct nodo *sgte;
+}Nodo;
+
+typedef struct cola{
+Nodo *ini;
+Nodo *fin;
+int tam;
+}Cola;
+
+
+Cola *creaCola()
+{
+	Cola *nueva;
+
+if(nueva=(Cola *) malloc(sizeof(Cola)))
+	{
+	nueva->tam = 0 ;
+	nueva->ini = nueva->fin = NULL ; 
+	}
+return nueva ;
+}
+
+void destruirCola (Cola *c){
+	Nodo *aux;
+
+	while (c->ini != NULL){
+		aux = c->ini;
+		c->ini = c->ini->sgte;
+		free (aux->datos);
+		free (aux);
+	}
+	free (c);
+}
+
+Nodo *crearNodo (Info *dato, Nodo *ptro){
+	Nodo *nuevo ;
+	if (nuevo = (Nodo *) malloc (sizeof(Nodo))) {
+		nuevo->datos = dato;
+		nuevo->sgte = ptro;
+	}
+	return nuevo;
+}
+
+
+Nodo *primero (Cola *c){
+	return c->ini;
+}
+
+
+Nodo *ultimo(Cola *c){
+	return c->fin;
+
+}
+
+bool vacia(Cola *c){
+	if(c->ini == NULL){
+		return true;
+	}else{
+		return false;
+	}
+}
+
+void ingresar(Info **pdato , int dato){
+	if (*pdato=(Info*)malloc(sizeof(Info)))
+	{
+		(*pdato)->dato = dato;
+	}
+	else{
+		printf("ERROR AL INGRESAR\n");
+		exit(0);
+	}
+}
+
+bool push (Cola *c , int info){
+	Info *pdato;
+	Nodo *aux;
+	ingresar(&pdato, info);
+	
+	if (aux = crearNodo (pdato, NULL)){
+		if(vacia(c)){
+			c->ini= aux ;
+		}
+		else{
+			c->fin->sgte = aux ;
+			c->fin = aux ;
+			c->tam++;
+			return true;
+		}
+
+
+Info *pop (Cola *c){
+	Nodo *aux;
+	Info *dato;
+	aux = c->ini;
+	dato = aux->datos;
+	c->ini = aux->sgte;
+	c->tam--;
+	if(vacia (c)){
+		c->fin = NULL ;
+		free (aux->datos);
+		free (aux);
+
+		return dato;
+	}
+}
